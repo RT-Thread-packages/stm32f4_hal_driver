@@ -4,6 +4,7 @@ import os
 cwd = GetCurrentDir()
 path = [os.path.join(cwd, 'Inc')]
 src_path = os.path.join(cwd, 'Src')
+path += [os.path.join(cwd, 'Inc/Legacy')]
 
 CPPDEFINES = ['USE_HAL_DRIVER']
 
@@ -48,13 +49,18 @@ if GetDepend(['RT_USING_USB']):
 
 if GetDepend(['RT_USING_CAN']):
     src += [os.path.join(src_path, 'stm32f4xx_hal_can.c')]
+
 if GetDepend(['RT_USING_HWTIMER']) or GetDepend(['RT_USING_PWM']) or GetDepend(['RT_USING_PULSE_ENCODER']):
     src += [os.path.join(src_path, 'stm32f4xx_hal_tim.c')]
     src += [os.path.join(src_path, 'stm32f4xx_hal_tim_ex.c')]
     src += [os.path.join(src_path, 'stm32f4xx_hal_lptim.c')]
 
 if GetDepend(['BSP_USING_ETH']):
-    src += [os.path.join(src_path, 'stm32f4xx_hal_eth.c')]
+    if GetDepend(['BSP_ETH_LEGACY_MODULE_ENABLED']):
+        src  += [os.path.join(src_path, 'Legacy/stm32f4xx_hal_eth.c')]
+    else:
+        src += [os.path.join(src_path, 'stm32f4xx_hal_eth.c')]
+
 if GetDepend(['RT_USING_ADC']):
     src += [os.path.join(src_path, 'stm32f4xx_hal_adc.c')]
     src += [os.path.join(src_path, 'stm32f4xx_hal_adc_ex.c')]
